@@ -11,6 +11,8 @@ import RxSwift
 import RxCocoa
 
 final class MovieViewController : UIViewController {
+    // 글자
+    var dateText = ""
     
     let searchBar : UISearchBar = {
         let search = UISearchBar()
@@ -23,15 +25,40 @@ final class MovieViewController : UIViewController {
     
     let tableView = UITableView()
     
+    // viewmodel
+    let viewModel = MovieViewModel()
+    
+    // dispose
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        naviTitle()
+
+        // UI
         configureUI()
+        
+        // Rx
+        bind()
     }
     
-    private func naviTitle() {
-        navigationItem.title = "영화순위"
+    private func bind() {
+        
+        let input = MovieViewModel.Input(text: searchBar.rx.text.orEmpty, searchBarClick: searchBar.rx.searchButtonClicked)
+        let output = viewModel.transform(input: input)
+        
+        input.text
+            .bind(with: self) { owner, text in
+                print("입력글자 : \(text)")
+                owner.dateText = text
+            }
+            .disposed(by: disposeBag)
+        
+        input.searchBarClick
+            .bind(with: self) { owner, _ in
+                print(owner.dateText)
+            }
+            .disposed(by: disposeBag)
+        
     }
     
     private func configureUI() {

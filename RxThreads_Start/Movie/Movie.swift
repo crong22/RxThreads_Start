@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+struct MovieResult : Decodable {
+    let boxOfficeResult : [BoxOfficeResult]
+}
+
+struct BoxOfficeResult : Decodable {
+    let rank : String
+    let movieNm : String
+    let openDt : String
+}
+
